@@ -20,4 +20,4 @@ kernel.o: kernel.c
 	gcc -m32 -ffreestanding -fno-pie -fno-stack-protector -c kernel.c -o kernel.o
 
 clean:
-	rm -f *.bin *.o *.flp *.tmp
+	rm -f *.bin *.o *.img *.tmp

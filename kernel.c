@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 #define VGA  ((volatile uint16_t*)0xB8000)
-#define COLOR 0x1F
+#define COLOR 0x02
 #define SCREEN_WIDTH 80
 #define SCREEN_HEIGHT 25
 
@@ -144,39 +144,57 @@ void snake(){
     clear_screen();
     print("[Snake] Arrow keys to move, ::exit to quit\n");
 
-    Point snake_body[SNAKE_MAX]; int len=3; snake_body[0].x=10; snake_body[0].y=5;
-    snake_body[1].x=9; snake_body[1].y=5; snake_body[2].x=8; snake_body[2].y=5;
+    Point snake_body[SNAKE_MAX]; 
+    int len=3;
+    snake_body[0].x=10; snake_body[0].y=5;
+    snake_body[1].x=9; snake_body[1].y=5;
+    snake_body[2].x=8; snake_body[2].y=5;
     Point fruit = {15,10};
     int dx=1, dy=0;
+    int temp_dx=1, temp_dy=0;
 
     while(1){
         // Draw
         clear_screen();
-        for(int i=0;i<len;i++){ int idx=snake_body[i].y*SCREEN_WIDTH+snake_body[i].x; if(idx<SCREEN_WIDTH*SCREEN_HEIGHT)VGA[idx]=(COLOR<<8)|'O'; }
-        int fidx=fruit.y*SCREEN_WIDTH+fruit.x; VGA[fidx]=(COLOR<<8)|'F';
+        for(int i=0;i<len;i++){ 
+            int idx=snake_body[i].y*SCREEN_WIDTH+snake_body[i].x; 
+            if(idx<SCREEN_WIDTH*SCREEN_HEIGHT)VGA[idx]=(COLOR<<8)|'O'; 
+        }
+        int fidx=fruit.y*SCREEN_WIDTH+fruit.x; 
+        VGA[fidx]=(COLOR<<8)|'F';
 
         // Input
         uint8_t k=read_key();
-        if(k==KEY_UP){ dx=0; dy=-1; }
-        else if(k==KEY_DOWN){ dx=0; dy=1; }
-        else if(k==KEY_LEFT){ dx=-1; dy=0; }
-        else if(k==KEY_RIGHT){ dx=1; dy=0; }
+        if(k==KEY_UP && dy!=1){ temp_dx=0; temp_dy=-1; }
+        else if(k==KEY_DOWN && dy!=-1){ temp_dx=0; temp_dy=1; }
+        else if(k==KEY_LEFT && dx!=1){ temp_dx=-1; temp_dy=0; }
+        else if(k==KEY_RIGHT && dx!=-1){ temp_dx=1; temp_dy=0; }
         else if(k==':'){ uint8_t n=read_key(); if(n==':'){ uint8_t e=read_key(); if(e=='e') break; } }
 
         // Move
+        dx = temp_dx;
+        dy = temp_dy;
         Point new_head = {snake_body[0].x+dx, snake_body[0].y+dy};
         for(int i=len;i>0;i--) snake_body[i]=snake_body[i-1];
         snake_body[0]=new_head;
-        if(new_head.x==fruit.x && new_head.y==fruit.y){ if(len<SNAKE_MAX) len++; fruit.x=(fruit.x+7)%SCREEN_WIDTH; fruit.y=(fruit.y+5)%SCREEN_HEIGHT; }
+
+        // Check fruit
+        if(new_head.x==fruit.x && new_head.y==fruit.y){ 
+            if(len<SNAKE_MAX) len++; 
+            fruit.x=(fruit.x+7)%SCREEN_WIDTH; 
+            fruit.y=(fruit.y+5)%SCREEN_HEIGHT; 
+        }
     }
+
     clear_screen();
 }
+
 
 // ======= SHELL =======
 void shell(){
     char cmd[64]; int i;
     while(1){
-        print("SRV//> "); i=0; history_pos=history_count;
+        print("UM//> "); i=0; history_pos=history_count;
         while(1){
             uint8_t k=read_key();
             if(k==KEY_UP){ if(history_pos>0){ history_pos--; strcpy(cmd,history[history_pos]); clear_screen(); print("SRV//> "); print(cmd); i=0; while(cmd[i]){ putchar(cmd[i]); i++; } } continue; }
@@ -195,9 +213,10 @@ void shell(){
         else if(strcmp(cmd,"compass")==0) compass();
         else if(strcmp(cmd,"snake")==0) snake();
         else if(cmd[0]=='e' && cmd[1]=='c' && cmd[2]=='h' && cmd[3]=='o' && cmd[4]==' '){ print(cmd+5); putchar('\n'); }
-        else print("[Unknown command]\n");
+        else if(strcmp(cmd,"ls")==0) print("kernel.bin\nboot.flp\nreadme.md\n");
+        else print("[ERROR]Unknown Command\n");
     }
 }
 
 // ======= KERNEL =======
-void kernel_main(){ clear_screen(); print("Welcome to ServeOS 32-bit Shell!\n"); shell(); }
+void kernel_main(){ clear_screen(); print("BagelOS Beta 2(Running on BK2)\n"); shell(); }
