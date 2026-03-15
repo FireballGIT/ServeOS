@@ -220,4 +220,11 @@ void shell(){
 }
 
 // ======= KERNEL =======
-void kernel_main(){ clear_screen(); print("BagelOS Beta 2(Running on BK2)\n"); shell(); }
+void splash() {
+    print("BBBBB    AAA     GGGGG   EEEEE   L        OOOOO    SSSSS\n");
+    print("B    B  A   A   G        E       L       O     O  S\n");
+    print("BBBBB   AAAAA   G  GGG   EEEE    L       O     O   SSSS\n");
+    print("B    B  A   A   G    G   E       L       O     O       S\n");
+    print("BBBBB   A   A    GGGG    EEEEE   LLLLL    OOOOO   SSSSS\n");
+}
+void kernel_main() { clear_screen(); splash(); print("Running on BK2\n"); shell(); }
