@@ -194,7 +194,7 @@ void snake(){
 void shell(){
     char cmd[64]; int i;
     while(1){
-        print("UM//> "); i=0; history_pos=history_count;
+        print("UM// >"); i=0; history_pos=history_count;
         while(1){
             uint8_t k=read_key();
             if(k==KEY_UP){ if(history_pos>0){ history_pos--; strcpy(cmd,history[history_pos]); clear_screen(); print("SRV//> "); print(cmd); i=0; while(cmd[i]){ putchar(cmd[i]); i++; } } continue; }
@@ -208,13 +208,14 @@ void shell(){
         else { for(int h=1;h<HISTORY_SIZE;h++) strcpy(history[h-1],history[h]); strcpy(history[HISTORY_SIZE-1],cmd); }
 
         if(strcmp(cmd,"exit")==0){ print("System Halted\n"); while(1)__asm__("hlt"); }
+        else if(strcmp(cmd,"halt")==0){ print("System Halted\n"); while(1)__asm__("hlt"); }
         else if(strcmp(cmd,"notepad")==0) notepad("Untitled");
         else if(strcmp(cmd,"calc")==0) calculator();
         else if(strcmp(cmd,"compass")==0) compass();
         else if(strcmp(cmd,"snake")==0) snake();
         else if(cmd[0]=='e' && cmd[1]=='c' && cmd[2]=='h' && cmd[3]=='o' && cmd[4]==' '){ print(cmd+5); putchar('\n'); }
         else if(strcmp(cmd,"ls")==0) print("kernel.bin\nboot.flp\nreadme.md\n");
-        else print("[ERROR]Unknown Command\n");
+        else { print("[1551] ):\nThe command '"); print(cmd); print("' isn't valid. Try again!"); }
     }
 }
 
