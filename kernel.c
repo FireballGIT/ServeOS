@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 #define VGA  ((volatile uint16_t*)0xB8000)
-#define COLOR 0x02
+#define COLOR 0x2F
 #define SCREEN_WIDTH 80
 #define SCREEN_HEIGHT 25
 
@@ -207,7 +207,7 @@ void shell(){
         if(history_count<HISTORY_SIZE) strcpy(history[history_count++],cmd);
         else { for(int h=1;h<HISTORY_SIZE;h++) strcpy(history[h-1],history[h]); strcpy(history[HISTORY_SIZE-1],cmd); }
 
-        if(strcmp(cmd,"exit")==0){ print("System Halted\n"); while(1)__asm__("hlt"); }
+        if(strcmp(cmd,"exit")==0){ print("[SYS:HLT]System Halted\n"); while(1)__asm__("hlt"); }
         else if(strcmp(cmd,"halt")==0){ print("System Halted\n"); while(1)__asm__("hlt"); }
         else if(strcmp(cmd,"notepad")==0) notepad("Untitled");
         else if(strcmp(cmd,"calc")==0) calculator();
@@ -215,7 +215,7 @@ void shell(){
         else if(strcmp(cmd,"snake")==0) snake();
         else if(cmd[0]=='e' && cmd[1]=='c' && cmd[2]=='h' && cmd[3]=='o' && cmd[4]==' '){ print(cmd+5); putchar('\n'); }
         else if(strcmp(cmd,"ls")==0) print("kernel.bin\nboot.flp\nreadme.md\n");
-        else { print("[1551] ):\nThe command '"); print(cmd); print("' isn't valid. Try again!"); }
+        else { print("[SYS:CMD505] ):\nThe command '"); print(cmd); print("' isn't valid. Try again!"); }
     }
 }
 
